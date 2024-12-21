@@ -22,8 +22,31 @@
 		height: 100%;
 
 		font-family: "MedievalSharp", serif;
-  font-weight: 400;
-  font-style: normal;
+		font-weight: 400;
+		font-style: normal;
+	}
+
+	.page_left {
+		background-color: rgba(246,240,228,1);
+		box-shadow: inset 15px 0 40px 20px rgba(218,187,132,1);
+	}
+	
+	.page_right {
+		background-color: rgba(246,240,228,1);
+		box-shadow: inset -15px 0 40px 20px rgba(218,187,132,1);
+	}
+
+	.notch {
+		clip-path: polygon(
+        0% 0%,
+        48% 0%,
+		49% 5px,
+        51% 5px,
+        52% 0%,
+        100% 0%,
+		100% 100%,
+		0% 100%
+    	);
 	}
 
 </style>
