@@ -1,11 +1,36 @@
 ---
-import Welcome from '../components/Welcome.astro';
 import Layout from '../layouts/Layout.astro';
 
-// Welcome to Astro! Wondering what to do next? Check out the Astro documentation at https://docs.astro.build
-// Don't want to use any of this? Delete everything in this file, the `assets`, `components`, and `layouts` directories, and start fresh.
+import Entry from '../components/Entry.astro';
+
+const days = [
+	{
+		day: 1,
+		date: "12/12/2024",
+		text: "Lorem ipsum dolor sit amet, consectetur adipiscing elit. Nulla nec purus feugiat,"
+	},
+	{
+		day: 2,
+		date: "13/12/2024",
+		text: "Lorem ipsum dolor sit amet, consectetur adipiscing elit. Nulla nec purus feugiat,"
+	},
+	{
+		day: 3,
+		date: "14/12/2024",
+		text: "Lorem ipsum dolor sit amet, consectetur adipiscing elit. Nulla nec purus feugiat,"
+	}
+]
 ---
 
 <Layout>
-	<Welcome />
+	<main class="flex h-screen" >
+		<div class="w-4/6 h-full bg-cyan-500"></div>
+		<div class="w-2/6 h-full bg-yellow-900">
+			{
+				days.map((day) => {
+					return <Entry key={day.day} day={day} />
+				})
+			}
+		</div>
+	</main>
 </Layout>

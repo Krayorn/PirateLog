@@ -1,0 +1,24 @@
+---
+const { day } = Astro.props;
+---
+
+<div class="h-40 flex justify-center border border-black p-4 bg-yellow-950">
+    <div class="w-full h-full flex justify-center items-center border border-black relative bg-yellow-900">
+        <div class="plank bg-yellow-950 z-0"></div>
+        <div class="plank inverse bg-yellow-950 z-0"></div>
+        <h1 class="text-amber-200 text-3xl z-10 " >Day {day.day}</h1>
+    </div>
+</div>
+
+<style>
+    .plank {
+        position: absolute;
+        width: 100%;
+        height: 20px;
+        transform: rotate(16deg);
+    }
+
+    .inverse  {
+        transform: rotate(-16deg);
+    }
+</style>
