@@ -8,15 +8,10 @@ function toRoman(num) {
 
 export default function Journal({ days, routePoints }) {
     const [openedPage, setPage] = useState(0)
-    const [transitioning, setTransitioning] = useState(false)
     const [logbookOpen, setLogbookOpen] = useState(false)
 
     const changePage = (newPage) => {
-        setTransitioning(true)
-        setTimeout(() => {
-            setPage(newPage)
-            setTransitioning(false)
-        }, 300)
+        setPage(newPage)
     }
 
     return (
@@ -30,7 +25,6 @@ export default function Journal({ days, routePoints }) {
                             content={days[openedPage]}
                             currentPage={openedPage + 1}
                             totalPages={days.length}
-                            transitioning={transitioning}
                             logbookOpen={logbookOpen}
                             setLogbookOpen={setLogbookOpen}
                         />
@@ -42,13 +36,13 @@ export default function Journal({ days, routePoints }) {
     )
 }
 
-function Page({ content, prev, next, currentPage, totalPages, transitioning, logbookOpen, setLogbookOpen }) {
+function Page({ content, prev, next, currentPage, totalPages, logbookOpen, setLogbookOpen }) {
     const hasLogbook = !!content.logbook
 
     return (
         <div className="flex w-full h-full flex-col items-center justify-center">
-            <div className="notch journal-notch bg-[#3d2b1f] w-[calc(80%_+_20px)] h-[8px]"></div>
-            <div className={`journal-book relative flex w-[calc(80%_+_20px)] h-[90%] overflow-hidden transition-opacity duration-300 ${transitioning ? "opacity-0" : "opacity-100"}`}>
+            <div className="notch journal-notch bg-[#3d2b1f] w-[calc(88%_+_20px)] h-[8px]"></div>
+            <div className="journal-book relative flex w-[calc(88%_+_20px)] h-[93%] overflow-hidden">
                 <div className="journal-spine bg-[#3d2b1f] w-[10px] h-full"></div>
                 <div className="py-[15px] leading-7 relative pr-[15px] pl-[35px] page_left w-1/2 h-full flex flex-col">
                     <PageHeader day={content.day} date={content.date} />
@@ -64,7 +58,7 @@ function Page({ content, prev, next, currentPage, totalPages, transitioning, log
                         </div>
                     )}
                     <div className="text-center text-sm text-[#8b7355] mt-auto pt-2 font-fondamento">
-                        Page {currentPage} of {totalPages}
+                        Page {currentPage} sur {totalPages}
                     </div>
                     <span onClick={next} className="nav-arrow absolute bottom-[10px] right-[10px] z-30">☞</span>
                 </div>
@@ -76,7 +70,7 @@ function Page({ content, prev, next, currentPage, totalPages, transitioning, log
                             className="logbook-tab"
                             onClick={() => setLogbookOpen(!logbookOpen)}
                         >
-                            <span className="logbook-tab-text">Logbook</span>
+                            <span className="logbook-tab-text">Livre de bord</span>
                         </div>
 
                         <div className={`logbook-parchment ${logbookOpen ? "logbook-open" : "logbook-closed"}`}>
@@ -86,7 +80,7 @@ function Page({ content, prev, next, currentPage, totalPages, transitioning, log
                                 </div>
 
                                 <h3 className="text-xl font-medieval text-[#3d2b1f] tracking-wide m-0 text-center pt-4 pb-2 border-b border-[#c4a265] mx-5">
-                                    ⚓ Ship's Logbook ⚓
+                                    ⚓ Livre de Bord ⚓
                                 </h3>
 
                                 <div className="flex-1 overflow-y-auto px-5 py-3">
@@ -144,7 +138,7 @@ function Page({ content, prev, next, currentPage, totalPages, transitioning, log
                     </>
                 )}
             </div>
-            <div className="notch journal-notch rotate-[180deg] w-[calc(80%_+_20px)] bg-[#3d2b1f] h-[8px]"></div>
+            <div className="notch journal-notch rotate-[180deg] w-[calc(88%_+_20px)] bg-[#3d2b1f] h-[8px]"></div>
         </div>
     )
 }
@@ -173,8 +167,8 @@ function RouteMap({ routePoints, currentDay }) {
     return (
         <section className="route-map-section">
             <div className="route-map-header">
-                <h3 className="route-map-title">Route Chart</h3>
-                <p className="route-map-subtitle">Day {toRoman(currentDay)} track across the coast.</p>
+                <h3 className="route-map-title">Carte de Route</h3>
+                <p className="route-map-subtitle">Tracé du jour {toRoman(currentDay)} le long de la côte.</p>
             </div>
             <div className="route-map-frame">
                 {mounted && (
@@ -191,7 +185,7 @@ function PageHeader({ day, date }) {
     return (
         <div className="text-center mb-4 pb-3 border-b border-[#c4a265]">
             <h2 className="text-3xl font-medieval text-[#3d2b1f] m-0 tracking-wide">
-                Day {toRoman(day)}
+                Jour {toRoman(day)}
             </h2>
             <p className="text-sm text-[#8b7355] m-0 mt-1 font-fondamento italic">
                 {date}
