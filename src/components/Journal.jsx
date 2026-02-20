@@ -1,4 +1,4 @@
-import { useState } from "react"
+import { useState, useEffect, lazy, Suspense } from "react"
 
 const ROMAN_NUMERALS = ["I", "II", "III", "IV", "V", "VI"]
 
@@ -6,7 +6,7 @@ function toRoman(num) {
     return ROMAN_NUMERALS[num - 1] || String(num)
 }
 
-export default function Journal({ days }) {
+export default function Journal({ days, routePoints }) {
     const [openedPage, setPage] = useState(0)
     const [transitioning, setTransitioning] = useState(false)
     const [logbookOpen, setLogbookOpen] = useState(false)
@@ -20,21 +20,24 @@ export default function Journal({ days }) {
     }
 
     return (
-        <main className="flex h-screen bg-[#1a0e08]" style={{ backgroundImage: "radial-gradient(ellipse at center, #2a1a0e 0%, #1a0e08 70%)" }}>
-            <div className="h-full w-full flex justify-center items-center">
-                {openedPage > -1 &&
-                    <Page
-                        prev={() => openedPage >= 1 && changePage(openedPage - 1)}
-                        next={() => openedPage < days.length - 1 && changePage(openedPage + 1)}
-                        content={days[openedPage]}
-                        currentPage={openedPage + 1}
-                        totalPages={days.length}
-                        transitioning={transitioning}
-                        logbookOpen={logbookOpen}
-                        setLogbookOpen={setLogbookOpen}
-                    />
-                }
+        <main className="flex flex-col bg-[#1a0e08]" style={{ backgroundImage: "radial-gradient(ellipse at center, #2a1a0e 0%, #1a0e08 70%)" }}>
+            <div className="journal-stage">
+                <div className="journal-panel">
+                    {openedPage > -1 && (
+                        <Page
+                            prev={() => openedPage >= 1 && changePage(openedPage - 1)}
+                            next={() => openedPage < days.length - 1 && changePage(openedPage + 1)}
+                            content={days[openedPage]}
+                            currentPage={openedPage + 1}
+                            totalPages={days.length}
+                            transitioning={transitioning}
+                            logbookOpen={logbookOpen}
+                            setLogbookOpen={setLogbookOpen}
+                        />
+                    )}
+                </div>
             </div>
+            <RouteMap routePoints={routePoints} currentDay={openedPage + 1} />
         </main>
     )
 }
@@ -44,17 +47,17 @@ function Page({ content, prev, next, currentPage, totalPages, transitioning, log
 
     return (
         <div className="flex w-full h-full flex-col items-center justify-center">
-            <div className="notch bg-[#3d2b1f] w-[calc(80%_+_20px)] h-[8px]"></div>
-            <div className={`relative flex w-[calc(80%_+_20px)] h-4/5 overflow-hidden transition-opacity duration-300 ${transitioning ? "opacity-0" : "opacity-100"}`}>
-                <div className="bg-[#3d2b1f] w-[10px] h-full"></div>
-                <div className="py-[15px] leading-8 relative pr-[15px] pl-[35px] page_left w-1/2 h-full flex flex-col">
+            <div className="notch journal-notch bg-[#3d2b1f] w-[calc(80%_+_20px)] h-[8px]"></div>
+            <div className={`journal-book relative flex w-[calc(80%_+_20px)] h-[90%] overflow-hidden transition-opacity duration-300 ${transitioning ? "opacity-0" : "opacity-100"}`}>
+                <div className="journal-spine bg-[#3d2b1f] w-[10px] h-full"></div>
+                <div className="py-[15px] leading-7 relative pr-[15px] pl-[35px] page_left w-1/2 h-full flex flex-col">
                     <PageHeader day={content.day} date={content.date} />
                     <div className="overflow-y-auto flex-1 pr-2 font-fondamento">
                         {renderText(content.textL)}
                     </div>
                     <span onClick={prev} className="nav-arrow absolute bottom-[10px] left-[10px] z-30">☜</span>
                 </div>
-                <div className="relative py-[15px] pl-[15px] pr-[35px] leading-8 page_right w-1/2 h-full flex flex-col">
+                <div className="relative py-[15px] pl-[15px] pr-[35px] leading-7 page_right w-1/2 h-full flex flex-col">
                     {content.textR && (
                         <div className="overflow-y-auto flex-1 pl-2 font-fondamento">
                             {renderText(content.textR)}
@@ -65,7 +68,7 @@ function Page({ content, prev, next, currentPage, totalPages, transitioning, log
                     </div>
                     <span onClick={next} className="nav-arrow absolute bottom-[10px] right-[10px] z-30">☞</span>
                 </div>
-                <div className="bg-[#3d2b1f] w-[10px] h-full"></div>
+                <div className="journal-spine bg-[#3d2b1f] w-[10px] h-full"></div>
 
                 {hasLogbook && (
                     <>
@@ -141,8 +144,46 @@ function Page({ content, prev, next, currentPage, totalPages, transitioning, log
                     </>
                 )}
             </div>
-            <div className="notch rotate-[180deg] w-[calc(80%_+_20px)] bg-[#3d2b1f] h-[8px]"></div>
+            <div className="notch journal-notch rotate-[180deg] w-[calc(80%_+_20px)] bg-[#3d2b1f] h-[8px]"></div>
         </div>
+    )
+}
+
+const LazyLeafletMap = lazy(() => import("./LeafletMap"))
+
+function RouteMap({ routePoints, currentDay }) {
+    const [mounted, setMounted] = useState(false)
+    useEffect(() => setMounted(true), [])
+
+    const daySegments = []
+    for (let d = 1; d <= currentDay; d++) {
+        const key = `day${d}`
+        if (routePoints[key]) {
+            daySegments.push({ day: d, points: routePoints[key] })
+        }
+    }
+
+    const allPoints = daySegments.flatMap((s) => s.points)
+    const minLat = allPoints.length ? Math.min(...allPoints.map((p) => p.lat)) : 47.72
+    const maxLat = allPoints.length ? Math.max(...allPoints.map((p) => p.lat)) : 47.90
+    const minLng = allPoints.length ? Math.min(...allPoints.map((p) => p.lng)) : -4.12
+    const maxLng = allPoints.length ? Math.max(...allPoints.map((p) => p.lng)) : -3.91
+    const center = [(minLat + maxLat) / 2, (minLng + maxLng) / 2]
+
+    return (
+        <section className="route-map-section">
+            <div className="route-map-header">
+                <h3 className="route-map-title">Route Chart</h3>
+                <p className="route-map-subtitle">Day {toRoman(currentDay)} track across the coast.</p>
+            </div>
+            <div className="route-map-frame">
+                {mounted && (
+                    <Suspense fallback={<div style={{ width: "100%", height: "100%", background: "#0f1a24" }} />}>
+                        <LazyLeafletMap daySegments={daySegments} currentDay={currentDay} center={center} />
+                    </Suspense>
+                )}
+            </div>
+        </section>
     )
 }
 

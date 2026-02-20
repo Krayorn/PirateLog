@@ -130,6 +130,50 @@ Nettoyage du bateau`,
 		]
 	},
 ]
+// 47.898403, -3.976317
+
+
+
+
+const routePoints = {
+	day1: [
+		{ lat: 47.871, lng: -3.914, label: "Concarneau" },
+		{ lat: 47.895, lng: -3.972, label: "Port-La-Forêt" },
+	],
+	day2: [
+		{ lat: 47.895, lng: -3.972, label: "Port-La-Forêt" },
+	],
+	day3: [
+		{ lat: 47.895, lng: -3.972, label: "Port-La-Forêt" },
+		{ lat: 47.870, lng: -3.960, label: "Baie de La Forêt" },
+		{ lat: 47.843, lng: -3.985, label: "Large de Beg-Meil" },
+		{ lat: 47.825, lng: -3.955, label: "Sud de Linuen" },
+		{ lat: 47.870, lng: -3.960, label: "Baie de La Forêt" },
+		{ lat: 47.895, lng: -3.972, label: "Port-La-Forêt" },
+	],
+	day4: [
+		{ lat: 47.895, lng: -3.972, label: "Port-La-Forêt" },
+		{ lat: 47.870, lng: -3.960, label: "Baie de La Forêt" },
+		{ lat: 47.825, lng: -3.955, label: "Sud de Linuen" },
+		{ lat: 47.770, lng: -4.030, label: "Île aux Moutons" },
+		{ lat: 47.722, lng: -3.950, label: "Penfret" },
+		{ lat: 47.727, lng: -3.972, label: "La Chambre" },
+	],
+	day5: [
+		{ lat: 47.727, lng: -3.972, label: "La Chambre" },
+		{ lat: 47.770, lng: -4.030, label: "Île aux Moutons" },
+		{ lat: 47.800, lng: -4.080, label: "Ouest de Le Boeuf" },
+		{ lat: 47.875, lng: -4.110, label: "Bénodet" },
+		{ lat: 47.883, lng: -4.116, label: "Sainte-Marine" },
+	],
+	day6: [
+		{ lat: 47.883, lng: -4.116, label: "Sainte-Marine" },
+		{ lat: 47.850, lng: -4.060, label: "Le Taro" },
+		{ lat: 47.830, lng: -4.000, label: "Sud de La Voleuse" },
+		{ lat: 47.800, lng: -3.970, label: "Entre Moutons et Linuen" },
+		{ lat: 47.871, lng: -3.914, label: "Concarneau" },
+	],
+}
 ---
 
 <Layout>
@@ -139,7 +183,7 @@ Nettoyage du bateau`,
 		<div class="divider">═══════⚓═══════</div>
 		<p class="ship-name">Aboard the <em>Castel</em> — Sun Odyssey 30i</p>
 	</header>
-	<Journal client:load days={days} />
+        <Journal client:load days={days} routePoints={routePoints} />
 </Layout>
 
 <style>
