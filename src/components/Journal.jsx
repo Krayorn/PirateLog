@@ -9,6 +9,7 @@ function toRoman(num) {
 export default function Journal({ days, routePoints }) {
     const [openedPage, setPage] = useState(0)
     const [logbookOpen, setLogbookOpen] = useState(false)
+    const [journalOpen, setJournalOpen] = useState(true)
 
     const changePage = (newPage) => {
         setPage(newPage)
@@ -16,22 +17,58 @@ export default function Journal({ days, routePoints }) {
 
     return (
         <main className="flex flex-col bg-[#1a0e08]" style={{ backgroundImage: "radial-gradient(ellipse at center, #2a1a0e 0%, #1a0e08 70%)" }}>
-            <div className="journal-stage">
-                <div className="journal-panel">
-                    {openedPage > -1 && (
-                        <Page
-                            prev={() => openedPage >= 1 && changePage(openedPage - 1)}
-                            next={() => openedPage < days.length - 1 && changePage(openedPage + 1)}
-                            content={days[openedPage]}
-                            currentPage={openedPage + 1}
-                            totalPages={days.length}
-                            logbookOpen={logbookOpen}
-                            setLogbookOpen={setLogbookOpen}
-                        />
-                    )}
+            <header className="captains-header">
+                <h1 className="captains-title">☠ Le Journal du Pirate ☠</h1>
+                <p className="captains-subtitle">Expédition à la voile — Concarneau, Septembre–Octobre 2024</p>
+                <div className="captains-divider">═══════⚓═══════</div>
+                <p className="captains-ship">À bord du <em>Castel</em> — Sun Odyssey 30i</p>
+            </header>
+
+            <div className="captains-table">
+                <div className={`captains-table-map ${journalOpen ? "map-behind" : "map-full"}`}>
+                    <RouteMap routePoints={routePoints} currentDay={openedPage + 1} />
+                </div>
+
+                <button
+                    className="journal-toggle-btn"
+                    onClick={() => setJournalOpen(!journalOpen)}
+                    title={journalOpen ? "Voir la carte" : "Ouvrir le journal"}
+                >
+                    {journalOpen ? "🗺️" : "📖"}
+                </button>
+
+                <div className={`captains-table-journal ${journalOpen ? "journal-visible" : "journal-hidden"}`}>
+                    <div className="journal-stage">
+                        <div className="journal-panel">
+                            {openedPage > -1 && (
+                                <Page
+                                    prev={() => openedPage >= 1 && changePage(openedPage - 1)}
+                                    next={() => openedPage < days.length - 1 && changePage(openedPage + 1)}
+                                    content={days[openedPage]}
+                                    currentPage={openedPage + 1}
+                                    totalPages={days.length}
+                                    logbookOpen={logbookOpen}
+                                    setLogbookOpen={setLogbookOpen}
+                                />
+                            )}
+                        </div>
+                    </div>
                 </div>
             </div>
-            <RouteMap routePoints={routePoints} currentDay={openedPage + 1} />
+
+            <div className={`day-nav ${journalOpen ? "day-nav-hidden" : ""}`}>
+                <span
+                    className="day-nav-arrow"
+                    onClick={() => openedPage >= 1 && changePage(openedPage - 1)}
+                >☜</span>
+                <span className="day-nav-label font-medieval">
+                    Jour {toRoman(openedPage + 1)}
+                </span>
+                <span
+                    className="day-nav-arrow"
+                    onClick={() => openedPage < days.length - 1 && changePage(openedPage + 1)}
+                >☞</span>
+            </div>
         </main>
     )
 }
@@ -165,19 +202,13 @@ function RouteMap({ routePoints, currentDay }) {
     const center = [(minLat + maxLat) / 2, (minLng + maxLng) / 2]
 
     return (
-        <section className="route-map-section">
-            <div className="route-map-header">
-                <h3 className="route-map-title">Carte de Route</h3>
-                <p className="route-map-subtitle">Tracé du jour {toRoman(currentDay)} le long de la côte.</p>
-            </div>
-            <div className="route-map-frame">
-                {mounted && (
-                    <Suspense fallback={<div style={{ width: "100%", height: "100%", background: "#0f1a24" }} />}>
-                        <LazyLeafletMap daySegments={daySegments} currentDay={currentDay} center={center} />
-                    </Suspense>
-                )}
-            </div>
-        </section>
+        <div className="route-map-fullscreen">
+            {mounted && (
+                <Suspense fallback={<div style={{ width: "100%", height: "100%", background: "#0f1a24" }} />}>
+                    <LazyLeafletMap daySegments={daySegments} currentDay={currentDay} center={center} />
+                </Suspense>
+            )}
+        </div>
     )
 }
 

@@ -177,49 +177,6 @@ const routePoints = {
 ---
 
 <Layout>
-	<header class="header">
-		<h1 class="title">☠ Le Journal du Pirate ☠</h1>
-		<p class="subtitle">Expédition à la voile — Concarneau, Septembre–Octobre 2024</p>
-		<div class="divider">═══════⚓═══════</div>
-		<p class="ship-name">À bord du <em>Castel</em> — Sun Odyssey 30i</p>
-	</header>
         <Journal client:load days={days} routePoints={routePoints} />
 </Layout>
 
-<style>
-	.header {
-		text-align: center;
-		padding: 2.5rem 1rem 1rem;
-		background-color: #1a1a2e;
-	}
-
-	.title {
-		font-family: "MedievalSharp", serif;
-		font-size: 3rem;
-		color: #c9a84c;
-		margin: 0 0 0.25rem;
-		letter-spacing: 0.05em;
-	}
-
-	.subtitle {
-		font-family: "MedievalSharp", serif;
-		font-size: 1.15rem;
-		color: #d4c9a8;
-		margin: 0 0 1rem;
-	}
-
-	.divider {
-		font-size: 1.25rem;
-		color: #c9a84c;
-		letter-spacing: 0.15em;
-		margin-bottom: 0.75rem;
-	}
-
-	.ship-name {
-		font-family: "MedievalSharp", serif;
-		font-size: 0.95rem;
-		color: #a89060;
-		margin: 0;
-		padding-bottom: 1.5rem;
-	}
-</style>
